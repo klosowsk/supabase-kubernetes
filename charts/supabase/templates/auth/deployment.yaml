@@ -77,7 +77,10 @@ spec:
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  {{- if .Values.secret.db.secretRef }}
+                  {{- if .Values.auth.dbSecretRef }}
+                  name: {{ .Values.auth.dbSecretRef }}
+                  key: {{ .Values.auth.dbSecretRefKey.password | default "password" }}
+                  {{- else if .Values.secret.db.secretRef }}
                   name: {{ .Values.secret.db.secretRef }}
                   key: {{ .Values.secret.db.secretRefKey.password | default "password" }}
                   {{- else }}
@@ -87,7 +90,10 @@ spec:
             - name: DB_PASSWORD_ENC
               valueFrom:
                 secretKeyRef:
-                  {{- if .Values.secret.db.secretRef }}
+                  {{- if .Values.auth.dbSecretRef }}
+                  name: {{ .Values.auth.dbSecretRef }}
+                  key: {{ .Values.auth.dbSecretRefKey.password | default "password" }}
+                  {{- else if .Values.secret.db.secretRef }}
                   name: {{ .Values.secret.db.secretRef }}
                   key: {{ .Values.secret.db.secretRefKey.password | default "password" }}
                   {{- else }}
@@ -95,15 +101,7 @@ spec:
                   key: password_encoded
                   {{- end }}
             - name: DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  {{- if .Values.secret.db.secretRef }}
-                  name: {{ .Values.secret.db.secretRef }}
-                  key: {{ .Values.secret.db.secretRefKey.database | default "database" }}
-                  {{- else }}
-                  name: {{ include "supabase.secret.db" . }}
-                  key: database
-                  {{- end }}
+              value: {{ .Values.auth.dbName | default "postgres" | quote }}
             - name: GOTRUE_DB_DATABASE_URL
               value: $(DB_DRIVER)://$(DB_USER):$(DB_PASSWORD_ENC)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?search_path=auth&sslmode=$(DB_SSL)
             - name: GOTRUE_DB_DRIVER

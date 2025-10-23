@@ -52,7 +52,10 @@ spec:
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  {{- if .Values.secret.db.secretRef }}
+                  {{- if .Values.functions.dbSecretRef }}
+                  name: {{ .Values.functions.dbSecretRef }}
+                  key: {{ .Values.functions.dbSecretRefKey.password | default "password" }}
+                  {{- else if .Values.secret.db.secretRef }}
                   name: {{ .Values.secret.db.secretRef }}
                   key: {{ .Values.secret.db.secretRefKey.password | default "password" }}
                   {{- else }}
@@ -62,7 +65,10 @@ spec:
             - name: DB_PASSWORD_ENC
               valueFrom:
                 secretKeyRef:
-                  {{- if .Values.secret.db.secretRef }}
+                  {{- if .Values.functions.dbSecretRef }}
+                  name: {{ .Values.functions.dbSecretRef }}
+                  key: {{ .Values.functions.dbSecretRefKey.password | default "password" }}
+                  {{- else if .Values.secret.db.secretRef }}
                   name: {{ .Values.secret.db.secretRef }}
                   key: {{ .Values.secret.db.secretRefKey.password | default "password" }}
                   {{- else }}
@@ -70,15 +76,7 @@ spec:
                   key: password_encoded
                   {{- end }}
             - name: DB_DATABASE
-              valueFrom:
-                secretKeyRef:
-                  {{- if .Values.secret.db.secretRef }}
-                  name: {{ .Values.secret.db.secretRef }}
-                  key: {{ .Values.secret.db.secretRefKey.database | default "database" }}
-                  {{- else }}
-                  name: {{ include "supabase.secret.db" . }}
-                  key: database
-                  {{- end }}
+              value: {{ .Values.functions.dbName | default "postgres" | quote }}
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:

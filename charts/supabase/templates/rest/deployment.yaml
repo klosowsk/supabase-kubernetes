@@ -46,7 +46,10 @@ spec:
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  {{- if .Values.secret.db.secretRef }}
+                  {{- if .Values.rest.dbSecretRef }}
+                  name: {{ .Values.rest.dbSecretRef }}
+                  key: {{ .Values.rest.dbSecretRefKey.password | default "password" }}
+                  {{- else if .Values.secret.db.secretRef }}
                   name: {{ .Values.secret.db.secretRef }}
                   key: {{ .Values.secret.db.secretRefKey.password | default "password" }}
                   {{- else }}
@@ -56,7 +59,10 @@ spec:
             - name: DB_PASSWORD_ENC
               valueFrom:
                 secretKeyRef:
-                  {{- if .Values.secret.db.secretRef }}
+                  {{- if .Values.rest.dbSecretRef }}
+                  name: {{ .Values.rest.dbSecretRef }}
+                  key: {{ .Values.rest.dbSecretRefKey.password | default "password" }}
+                  {{- else if .Values.secret.db.secretRef }}
                   name: {{ .Values.secret.db.secretRef }}
                   key: {{ .Values.secret.db.secretRefKey.password | default "password" }}
                   {{- else }}
@@ -64,15 +70,7 @@ spec:
                   key: password_encoded
                   {{- end }}
             - name: DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  {{- if .Values.secret.db.secretRef }}
-                  name: {{ .Values.secret.db.secretRef }}
-                  key: {{ .Values.secret.db.secretRefKey.database | default "database" }}
-                  {{- else }}
-                  name: {{ include "supabase.secret.db" . }}
-                  key: database
-                  {{- end }}
+              value: {{ .Values.rest.dbName | default "postgres" | quote }}
             - name: PGRST_DB_URI
               value: $(DB_DRIVER)://$(DB_USER):$(DB_PASSWORD_ENC)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=$(DB_SSL)
             - name: PGRST_JWT_SECRET

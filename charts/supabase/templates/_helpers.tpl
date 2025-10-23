@@ -60,3 +60,36 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Supavisor component name
+*/}}
+{{- define "supabase.supavisor.name" -}}
+{{- printf "%s-supavisor" (include "supabase.name" .) | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+Supavisor fullname
+*/}}
+{{- define "supabase.supavisor.fullname" -}}
+{{- printf "%s-supavisor" (include "supabase.fullname" .) | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+Supavisor selector labels
+*/}}
+{{- define "supabase.supavisor.selectorLabels" -}}
+{{ include "supabase.selectorLabels" . }}
+app.kubernetes.io/component: supavisor
+{{- end -}}
+
+{{/*
+Supavisor service account name
+*/}}
+{{- define "supabase.supavisor.serviceAccountName" -}}
+{{- if .Values.supavisor.serviceAccount.create -}}
+    {{ default (include "supabase.supavisor.fullname" .) .Values.supavisor.serviceAccount.name }}
+{{- else -}}
+    {{ default "default" .Values.supavisor.serviceAccount.name }}
+{{- end -}}
+{{- end -}}

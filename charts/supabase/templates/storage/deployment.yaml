@@ -107,7 +107,10 @@ spec:
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  {{- if .Values.secret.db.secretRef }}
+                  {{- if .Values.storage.dbSecretRef }}
+                  name: {{ .Values.storage.dbSecretRef }}
+                  key: {{ .Values.storage.dbSecretRefKey.password | default "password" }}
+                  {{- else if .Values.secret.db.secretRef }}
                   name: {{ .Values.secret.db.secretRef }}
                   key: {{ .Values.secret.db.secretRefKey.password | default "password" }}
                   {{- else }}
@@ -117,7 +120,10 @@ spec:
             - name: DB_PASSWORD_ENC
               valueFrom:
                 secretKeyRef:
-                  {{- if .Values.secret.db.secretRef }}
+                  {{- if .Values.storage.dbSecretRef }}
+                  name: {{ .Values.storage.dbSecretRef }}
+                  key: {{ .Values.storage.dbSecretRefKey.password | default "password" }}
+                  {{- else if .Values.secret.db.secretRef }}
                   name: {{ .Values.secret.db.secretRef }}
                   key: {{ .Values.secret.db.secretRefKey.password | default "password" }}
                   {{- else }}
@@ -125,15 +131,7 @@ spec:
                   key: password_encoded
                   {{- end }}
             - name: DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  {{- if .Values.secret.db.secretRef }}
-                  name: {{ .Values.secret.db.secretRef }}
-                  key: {{ .Values.secret.db.secretRefKey.database | default "database" }}
-                  {{- else }}
-                  name: {{ include "supabase.secret.db" . }}
-                  key: database
-                  {{- end }}
+              value: {{ .Values.storage.dbName | default "postgres" | quote }}
             - name: DATABASE_URL
               value: $(DB_DRIVER)://$(DB_USER):$(DB_PASSWORD_ENC)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?search_path=auth&sslmode=$(DB_SSL)
             - name: PGRST_JWT_SECRET
