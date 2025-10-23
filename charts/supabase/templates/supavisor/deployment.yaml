@@ -155,12 +155,19 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.supavisor.volumeMounts }}
           volumeMounts:
+            - name: pooler-config
+              mountPath: /etc/pooler
+              readOnly: true
+          {{- with .Values.supavisor.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.supavisor.volumes }}
       volumes:
+        - name: pooler-config
+          configMap:
+            name: {{ include "supabase.supavisor.fullname" . }}-config
+            defaultMode: 0444
+      {{- with .Values.supavisor.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.supavisor.nodeSelector }}
