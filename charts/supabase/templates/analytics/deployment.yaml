@@ -112,6 +112,26 @@ spec:
                   name: {{ include "supabase.secret.analytics" . }}
                   key: apiKey
                   {{- end }}
+            - name: LOGFLARE_PRIVATE_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  {{- if .Values.secret.analytics.secretRef }}
+                  name: {{ .Values.secret.analytics.secretRef }}
+                  key: {{ .Values.secret.analytics.secretRefKey.apiKey | default "apiKey" }}
+                  {{- else }}
+                  name: {{ include "supabase.secret.analytics" . }}
+                  key: apiKey
+                  {{- end }}
+            - name: LOGFLARE_PUBLIC_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  {{- if .Values.secret.analytics.secretRef }}
+                  name: {{ .Values.secret.analytics.secretRef }}
+                  key: {{ .Values.secret.analytics.secretRefKey.apiKey | default "apiKey" }}
+                  {{- else }}
+                  name: {{ include "supabase.secret.analytics" . }}
+                  key: apiKey
+                  {{- end }}
             {{- if .Values.analytics.bigQuery.enabled }}
             - name: GOOGLE_PROJECT_ID
               value: {{ .Values.analytics.bigQuery.projectId | quote }}
