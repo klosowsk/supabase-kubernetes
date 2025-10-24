@@ -123,6 +123,8 @@ spec:
             {{- end }}
             - mountPath: /home/deno/functions/main
               name: functions-main
+            - mountPath: /var/tmp
+              name: tmp-cache
           {{- with .Values.functions.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
@@ -134,6 +136,8 @@ spec:
         - name: functions-main
           configMap:
             name: {{ include "supabase.functions.fullname" . }}-main
+        - name: tmp-cache
+          emptyDir: {}
       {{- with .Values.functions.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
