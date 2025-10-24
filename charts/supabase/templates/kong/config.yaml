@@ -176,6 +176,11 @@ data:
           - name: key-auth
             config:
               hide_credentials: false
+          - name: request-transformer
+            config:
+              replace:
+                headers:
+                  - "Authorization: Bearer $(headers.apikey)"
           - name: acl
             config:
               hide_groups_header: true
