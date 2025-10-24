@@ -136,6 +136,7 @@ spec:
         - name: functions-main
           configMap:
             name: {{ include "supabase.functions.fullname" . }}-main
+            defaultMode: 0644
         - name: tmp-cache
           emptyDir: {}
       {{- with .Values.functions.nodeSelector }}
