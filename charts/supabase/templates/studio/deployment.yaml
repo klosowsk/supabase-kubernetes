@@ -39,6 +39,13 @@ spec:
             - name: {{ $key }}
               value: {{ $value | quote }}
             {{- end }}
+            {{- if .Values.studio.dbSecretRef }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.studio.dbSecretRef }}
+                  key: {{ .Values.studio.dbSecretRefKey.password | default "password" }}
+            {{- end }}
             {{- if .Values.kong.enabled }}
             - name: SUPABASE_URL
               value: http://{{ include "supabase.kong.fullname" . }}:{{ .Values.kong.service.port }}
